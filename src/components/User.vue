@@ -1,7 +1,9 @@
 <template>
     <div class="user" @click="showUserInfo=(!showUserInfo)">
-        <img src="../assets/User_Circle.png" alt=""/>
-        <span class="name">{{ user.user_name }}</span>
+        <img v-if="user.user_id===4" src="../../static/penguine.png" alt=""/>
+        <img v-else-if="user.user_id===5" src="../../static/apeach.png" alt=""/>
+        <img v-else src="../assets/User_Circle.png" alt=""/>
+        <span class="name">{{ user_name() }}</span>
         <user-info v-if="showUserInfo" @close="showUserInfo=false"></user-info>
     </div>
 </template>
@@ -19,6 +21,11 @@ export default {
   computed: {
     user () {
       return this.$store.state.user
+    }
+  },
+  methods: {
+    user_name: function () {
+      return localStorage.getItem('user_name')
     }
   },
   components: { UserInfo }

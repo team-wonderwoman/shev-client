@@ -6,10 +6,14 @@
     </router-link>
 
     <div class="groupuser" @click="showEditProfile=true">
-      <img class="profile" src="../assets/User_Circle.png" alt=""/>
+      <img class="profile" v-if="user.user_id===4" src="../../static/penguine.png" alt=""/>
+      <img class="profile" v-else-if="user.user_id===5" src="../../static/apeach.png" alt=""/>
+      <img class="profile" v-else src="../assets/User_Circle.png" alt=""/>
       <img class="pencil" src="../assets/pencil.png" height="25" width="25"/>
-      <h3>{{ user.user_name }}</h3>
-      <p>{{ user.user_email }}</p>
+      <!-- <h3>{{ user.user_name }}</h3> -->
+      <h3>{{ user_name() }}</h3>
+      <!-- <p>{{ user.user_email }}</p> -->
+      <p>{{ user_email() }}</p>
       <button class="logout-button" @click="logoutPost()">로그아웃</button>
     </div>
 
@@ -18,9 +22,9 @@
     <ul class="groups">
       <li class="group" v-for="(g, index) in user.group_list" v-bind:key="index">
         <div @click="moveGroup(g.id)">
-          <router-link to="/group1/topic1">
+          <!-- <router-link to="/group/"> -->
             {{ g.group_name }}
-          </router-link>
+          <!-- </router-link> -->
 
           <button v-if="g.manager_id===user.user_id" @click="editGroup(g.id, index)">
             그룹 삭제
@@ -73,6 +77,11 @@ export default {
       .catch((ex) => {
         console.log('ERROR: ' + ex)
       })
+
+    if (this.group.ws !== null) {
+      this.group.ws.close()
+      console.log('Websocket closed')
+    }
   },
   data: function () {
     return {
@@ -99,11 +108,12 @@ export default {
     remove: function (id, index) {
       if (confirm('정말 탈퇴하시겠습니까?')) {
         this.$store.commit('remove', {index: index})
-        this.$axios.delete('http://192.168.0.24:9000/api/group/' + this.user.user_id + '/' + id + '/exit/', {
+        this.$axios.delete('http://192.168.0.33:9000/api/group/' + this.user.user_id + '/' + id + '/exit/', {
           headers: {'Authorization': 'Token ' + localStorage.getItem('Token') }
         })
           .then((response) => {
             console.log(response)
+            this.$router.push('/main/')
           })
           .catch((ex) => {
             console.log('ERROR: ' + ex)
@@ -120,6 +130,7 @@ export default {
         .then((response) => {
           console.log(response)
           this.$store.commit('removeGroup', {index: index})
+          this.$router.push('/main/')
         })
         .catch((ex) => {
           console.log(ex)
@@ -142,9 +153,17 @@ export default {
       if (!this.DEBUG) {
         this.$store.commit('moveGroup', {group_id: this.group_id})
         this.$store.commit('setWebsocket', {group_id: this.group_id})
+        localStorage.setItem('group_id', this.group_id)
+        this.$router.push('/group/'+ this.group_id + '/')
       } else {
         this.$store.commit('moveGroup', {group_id: 6})
       }
+    },
+    user_name: function () {
+      return localStorage.getItem('user_name')
+    },
+    user_email: function () {
+      return localStorage.getItem('user_email')
     }
   }
 }
@@ -215,6 +234,7 @@ export default {
   border-radius: 10px;
   color: #bfbfbf;
   font-size: 12px;
+  background-color: transparent;
 }
 
 .groups {
@@ -249,6 +269,7 @@ export default {
   border-radius: 10px;
   color: #bfbfbf;
   font-size: 12px;
+  background-color: transparent;
 }
 
 .addgroup {

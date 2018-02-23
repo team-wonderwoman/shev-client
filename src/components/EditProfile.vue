@@ -31,7 +31,7 @@
 
           <div class="modal-footer">
             <button class="modal-default-button" @click="editPost(); $emit('close')">수정하기</button>
-            <button class="modal-default-button" @click="$emit('close'); signOut()">계정 삭제하기</button>
+            <button class="modal-default-button" @click="signOut(); $emit('close');">계정 삭제하기</button>
           </div>
         </div>
       </div>
@@ -59,25 +59,28 @@ export default {
   },
   methods: {
     editPost: function () {
-      var vm = this
-      this.$axios.post('http://192.168.0.24:8000/api/profile/' + this.user_id,
-        {
-          user_name: this.newname,
-          user_email: this.newemail,
-          password: this.newpass,
-          user_tel: this.newphone
-        })
-        .then((response) => {
-          console.log(response)
-          vm.result = response.data
-        })
-        .catch((ex) => {
-          console.log(ex)
-        })
+      // var vm = this
+      // this.$axios.post('http://192.168.0.24:8000/api/accounts/profile/' + this.user_id, 
+      //   {
+      //     user_name: this.newname,
+      //     user_email: this.newemail,
+      //     password: this.newpass,
+      //     user_tel: this.newphone
+      //   },
+      //   {
+      //     headers: {'Authorization': 'Token ' + localStorage.getItem('Token')}
+      //   })
+      //   .then((response) => {
+      //     console.log(response)
+      //     vm.result = response.data
+      //   })
+      //   .catch((ex) => {
+      //     console.log(ex)
+      //   })
     },
     signOut: function () {
-      this.$axios.get('http://192.168.0.24:8000/api/' + this.user.user_id + '/signout/', {
-        headers: {'Authorization': 'Token ' + localStorage.getItem('Token')}
+      this.$axios.get('http://192.168.0.24:8000/api/accounts/' + this.user.user_id + '/signout/', 
+        {headers: {'Authorization': 'Token ' + localStorage.getItem('Token')}
       })
         .then((response) => {
           console.log(response)

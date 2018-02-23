@@ -26,16 +26,6 @@ import ChatPop from './ChatPop.vue'
 export default {
   created: function () {
     eventBus.$on('add-chat', this.addChat)
-
-    // var vm = this
-    // this.$axios.get('http://192.168.0.33:8000/api/group/' + this.group_id + '/chats/')
-    //   .then((response) => {
-    //     console.log(response)
-    //     vm.result = response.data
-    //   })
-    //   .catch((ex) => {
-    //     console.log('ERROR: ' + ex)
-    //   })
   },
   data: function () {
     return {
@@ -59,11 +49,14 @@ export default {
       var name_list = []
       for (var i=0; i<selected.length; i++) {
         id_list.push(selected[i].id)
-        name_list.push(selected[i].user_name)
+        name_list.push(
+          {member_name: selected[i].user_name}
+        )
       }
 
       id_list.push(this.user.user_id)
-      name_list.push(this.user.user_name)
+      name_list.push({member_name: this.user.user_name})
+      console.log(name_list)
 
       var vm = this
       this.$axios.post('http://192.168.0.33:9000/api/group/' + this.group.group_id + '/chatrooms/',
@@ -80,6 +73,7 @@ export default {
               id: vm.result.id,
               chatRoomMember_name: name_list 
           }
+          console.log(data)
           this.$store.commit('addChat', {data: data})
         })
         .catch((ex) => {
@@ -110,6 +104,7 @@ export default {
         member_list.push(members[i].member_name)
       }
       var member_string = member_list.join(', ')
+      
       return member_string
     }
   }
@@ -118,11 +113,11 @@ export default {
 
 <style>
 .chatchat {
-  height: 252px;
+  height: 222px;
 }
 
 .chattotal {
-  height: 200px;
+  height: 170px;
   width: 100%;
   overflow-y: scroll;
   float: left;

@@ -57,7 +57,7 @@ export default {
     }
   },
   methods: {
-    loginPost: function (login_id, login_email, login_name, login_password) {
+    loginPost: function () {
       var vm = this
       this.$axios.post('http://192.168.0.24:8000/api/accounts/login/',
         {
@@ -73,6 +73,8 @@ export default {
           } else {
             localStorage.setItem('Token', vm.result.Token)
             localStorage.setItem('user_id', vm.result.User_id)
+            localStorage.setItem('user_email', this.login_email)
+            localStorage.setItem('user_name', vm.result.user_name)
             this.$store.commit('login', {login_id: vm.result.User_id, login_email: this.login_email, login_name:vm.result.user_name, login_password: this.login_password})
             this.$router.push('/main/')
           }

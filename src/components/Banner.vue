@@ -27,7 +27,14 @@ export default {
       } else {
         for (var j = 0; j < this.group.chat_list.length; j++) {
           if (this.group.chat_list[j].id === this.user.current_roomid) {
-            return this.group.chat_list[j].chatroom_name
+            var members = this.group.chat_list[j].chatRoomMember_name
+            var member_list = []
+            for (var i = 0; i < members.length; i++) {
+              member_list.push(members[i].member_name)
+            }
+            var member_string = member_list.join(', ')
+                  
+            return member_string
           }
         }
       }

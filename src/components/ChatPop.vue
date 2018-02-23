@@ -17,7 +17,7 @@
           </ul>
 
           <div class="modal-footer">
-            <button class="modal-default-button" @click="$emit('close'); addChat()">Make</button>
+            <button class="modal-default-button" @click="addChat(); $emit('close');">Make</button>
           </div>
         </div>
       </div>

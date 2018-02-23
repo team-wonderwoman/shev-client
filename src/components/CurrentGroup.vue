@@ -32,7 +32,7 @@ export default {
   methods: {
     currentGroup: function () {
       for (var i = 0; i < this.user.group_list.length; i++) {
-        if (this.user.current_group === this.user.group_list[i].id) {
+        if (localStorage.getItem('group_id') == this.user.group_list[i].id) {
           this.currentgroup = this.user.group_list[i].group_name
           return this.currentgroup
         }

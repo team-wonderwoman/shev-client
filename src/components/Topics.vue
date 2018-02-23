@@ -31,15 +31,6 @@ export default {
     eventBus.$on('add-topic', this.addTopic)
     eventBus.$on('edit-topic', this.editTopic)
 
-    // var vm = this
-    // this.$axios.get('http://192.168.0.33:8000/api/group/' + this.group_id + '/topics/')
-    //   .then((response) => {
-    //     console.log(response)
-    //     vm.result = response.data
-    //   })
-    //   .catch((ex) => {
-    //     console.log('ERROR: ' + ex)
-    //   })
   },
   data: function () {
     return {
@@ -65,18 +56,19 @@ export default {
         var vm = this
         this.$axios.post('http://192.168.0.33:9000/api/group/' + this.group.group_id + '/topics/',
           {
-            topic_name: txt
+            topic_name: txt,
+            first_topic_id: this.group.topic_list[0].id
           },
           {headers: { 'Authorization': 'Token ' + localStorage.getItem('Token') }}
           )
           .then((response) => {
             console.log(response)
             vm.result = response.data
-            var data = {
-              id: vm.result.id,
-              topic_name: txt
-            }
-            this.$store.commit('addTopic', {data: data})
+            // var data = {
+            //   id: vm.result.id,
+            //   topic_name: txt
+            // }
+            // this.$store.commit('addTopic', {data: data})
           })
           .catch((ex) => {
             console.log('ERROR: ' + ex)
@@ -109,7 +101,6 @@ export default {
       }
       this.group.ws.send(JSON.stringify(data_leave))
       this.topic_id = id
-      console.log('Topic id is ' + this.topic_id)
       var data_join = {
         'command': 'join',
         'roomtype': 'topics',
@@ -126,11 +117,11 @@ export default {
 
 <style scoped>
 .topictopic {
-  height: 252px;
+  height: 222px;
 }
 
 .topictotal {
-  height: 200px;
+  height: 170px;
   width: 100%;
   overflow-y: scroll;
   float: left;

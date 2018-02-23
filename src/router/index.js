@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Join from '@/components/Join'
-// import GroupSide from '@/components/GroupSide'
 import Groups from '@/components/Groups'
 import ChatSide from '@/components/ChatSide'
 import ChatBox from '@/components/ChatBox'
@@ -29,10 +28,10 @@ export default new Router({
       component: Groups
     },
     {
-      path: '/group1',
+      path: '/group',
       component: ChatSide,
       children: [
-        {path: 'topic1', component: ChatBox}
+        {path: ':group_id', component: ChatBox}
       ]
     }
   ]

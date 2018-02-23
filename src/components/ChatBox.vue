@@ -7,13 +7,17 @@
         <transition-group name="slide-fade" id="slide-fade">
           <li v-for="(a, index) in messages" v-bind:key="index">
             <div v-if="!a.is_file">
-              <img class="userimage" src="../../static/User_Circle.png" alt=""/>
+              <img class="userimage" v-if="a.user_id===4 || a.sender==='권희정'" src="../../static/penguine.png" alt=""/>
+              <img class="userimage" v-else-if="a.user_id===5 || a.sender==='최예진'" src="../../static/apeach.png" alt=""/>
+              <img class="userimage" v-else src="../../static/User_Circle.png" alt=""/>
               <div class="username">{{ a.sender }}</div><br/>
               <span class="bubble">{{ a.contents }}</span>
               <span class="time">{{ a.created_time.slice(11, 16) }}</span>
             </div>
             <div v-else>
-              <img class="userimage" src='../../static/User_Circle.png' alt='' />
+              <img class="userimage" v-if="a.user_id===4 || a.sender==='권희정'" src="../../static/penguine.png" alt=""/>
+              <img class="userimage" v-else-if="a.user_id===5 || a.sender==='최예진'" src="../../static/apeach.png" alt=""/>
+              <img class="userimage" v-else src="../../static/User_Circle.png" alt=""/>
               <div class="username">{{ a.sender }}</div><br/>
               <div class="file-bubble">
                 <!-- <div class="filetype-div"> -->
@@ -62,6 +66,7 @@ export default {
     if (!this.DEBUG) {
       eventBus.$on('init', this.init)
       eventBus.$on('send', this.send)
+      eventBus.$on('plusTopic', this.plusTopic)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
       this.group.ws.onmessage = function (message) {
         var data = JSON.parse(message.data)
@@ -70,17 +75,25 @@ export default {
         if (data.leave != undefined) { // 방을 떠날 때
           console.log('leave room')
         } else if (data.msg_type === 0) { // 메세지를 하나 입력했을 때, 브로드캐스팅
-          var msg = {
-            contents: data.message.contents,
-            created_time: data.message.created_time,
-            id: data.message.id,
-            is_file: data.message.is_file,
-            sender: data.username,
-            topic_id: data.message.topic_id,
-            user_id: data.message.user_id
-          }
+          if (data.room_id != undefined) {
+            var data = {
+              id: data.room_id,
+              topic_name: data.room_name
+            }
+            eventBus.$emit('plusTopic', data)
+          } else {
+            var msg = {
+              contents: data.message.contents,
+              created_time: data.message.created_time,
+              id: data.message.id,
+              is_file: data.message.is_file,
+              sender: data.username,
+              topic_id: data.message.topic_id,
+              user_id: data.message.user_id
+            }
 
-          eventBus.$emit('send', msg)
+            eventBus.$emit('send', msg)
+          }
 
         } else if (data.msg_type !== 4 && data.msg_type !== 5) { // 방에 처음 들어갔을 때, 기존의 데이터를 불러옴.
           this.ws_messages = data.message.messages_serializer
@@ -157,7 +170,7 @@ export default {
             this.message = ''
           }
         } else {
-          this.messages.push({sender: 'yegi', contents: this.message})
+          this.messages.push({sender: '박예기', contents: this.message})
           this.message = ''
         }
       }
@@ -167,7 +180,7 @@ export default {
 
       if (elem.scrollTop() === 0) {
         console.log('Now scroll is top')
-        $('.messagebox').scrollTop('300')
+        $('.messagebox').scrollTop('600')
       }
     },
     filesChange: function () {
@@ -179,9 +192,8 @@ export default {
       data.append('user', this.user.user_id)
       console.log(data)
 
-      this.$axios.post('http://192.168.0.33:9001/api/upload/topics/' + this.user.current_roomid + '/', data,
+      this.$axios.post('http://192.168.0.33:9001/api/upload/' + this.user.current_type + '/' + this.user.current_roomid + '/', data,
         {headers: { 'Authorization': 'Token ' + localStorage.getItem('Token') }})
-      // this.$axios.post('http://192.168.0.33:9001/api/upload/topics/' + 12 + '/', data)
         .then((response) => {
           this.result = response.data
           console.log(response)
@@ -193,8 +205,7 @@ export default {
         })
     },
     fileDownload: function (id) {
-      this.$axios.get('http://192.168.0.33:9001/api/download/topics/' + this.user.current_roomid + '/' + id + '/',
-      // this.$axios.get('http://192.168.0.33:9001/api/download/topics/' + 12 + '/' + 69 + '/',
+      this.$axios.get('http://192.168.0.33:9001/api/download/' + this.user.current_type + '/' + this.user.current_roomid + '/' + id + '/',
         {responseType: 'blob',
           headers: { 'Authorization': 'Token ' + localStorage.getItem('Token') }
         })
@@ -222,6 +233,9 @@ export default {
     },
     send: function (msg) {
       this.messages.push(msg)
+    },
+    plusTopic: function (data) {
+      this.$store.commit('addTopic', {data: data})
     }
   },
   components: { Banner }
@@ -246,10 +260,6 @@ export default {
   overflow-y: scroll;
   bottom: 90px;
   top: 63px;
-}
-
-#old-bubbles {
-  position: relative;
 }
 
 .bubbles {

@@ -3,7 +3,9 @@
     <div class="modal-container">
 
       <div class="modal-header">
-        <img src="../assets/User_Circle.png" alt=""/>
+        <img v-if="user.user_id===4" src="../../static/penguine.png" alt=""/>
+        <img v-else-if="user.user_id===5" src="../../static/apeach.png" alt=""/>
+        <img v-else src="../assets/User_Circle.png" alt=""/>
         <h3>{{ user.user_name }}</h3>
         <!-- <button @click="showEditProfile=true">회원정보 수정</button> -->
       </div>
@@ -13,8 +15,8 @@
       <div class="modal-body">
         <span>Email</span><br />
         <span>{{ user.user_email}}</span><br /><br />
-        <span>Phone#</span><br />
-        <span>{{ user.user_tel }}</span>
+<!--         <span>Phone#</span><br />
+        <span>{{ user.user_tel }}</span> -->
       </div>
 
       <button @click="logoutPost()">로그아웃</button>
@@ -41,14 +43,6 @@ export default {
   },
   created: function () {
     var vm = this
-    // this.$axios.get('http://192.168.0.24:8000/api/profile/' + this.user_id)
-    //   .then((response) => {
-    //     console.log(response)
-    //     vm.result = response.data
-    //   })
-    //   .catch((ex) => {
-    //     console.log('ERROR: ' + ex)
-    //   })
   },
   methods: {
     logoutPost: function () {
@@ -83,6 +77,7 @@ export default {
   width: 100%;
   margin: 0px auto;
   padding: 20px 30px 30px;
+  padding-right: 50px;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 0 4px rgba(0, 0, 0, .33);

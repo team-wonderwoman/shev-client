@@ -46,7 +46,7 @@ export default {
   created: function () {
     if (!this.DEBUG) {
       var vm = this
-      this.$axios.get('http://192.168.0.33:9000/api/group/' + this.group.group_id + '/' + this.user.user_id + '/',
+      this.$axios.get('http://192.168.0.33:9000/api/group/' + localStorage.getItem('group_id') + '/' + localStorage.getItem('user_id') + '/',
         {headers: { 'Authorization': 'Token ' + localStorage.getItem('Token') }}
       )  //group/group_id/user_id
         .then((response) => {
@@ -88,13 +88,16 @@ export default {
 }
 
 .addmember {
-  position: absolute;
+  position: relative;
+  /*position: absolute;*/
+  text-align: center;
   height: 20px;
-  bottom: 15px;
-  left: 55px;
+  bottom: 0;
+  top: 300px;
   cursor: pointer;
   background-color: #fff;
   border-top: 1px solid #bfbfbf;
+  /*border-width: 70%;*/
   padding-top: 15px;
 }
 
